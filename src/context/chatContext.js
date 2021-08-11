@@ -10,8 +10,12 @@ export const Context = React.createContext();
 const reducer = (state, action) => {
   switch (action.type) {
     case MESSAGE_RECEIVED: {
+      const roomId = action.roomId;
       const newState = { ...state };
-      newState.chat.push({
+      if (!newState.chat[roomId]) {
+        newState.chat[roomId] = [];
+      }
+      newState.chat[roomId].push({
         message: action.message,
         type: 'received',
         author: action.author,
@@ -19,8 +23,12 @@ const reducer = (state, action) => {
       return newState;
     }
     case MESSAGE_SEND: {
+      const roomId = action.roomId;
       const newState = { ...state };
-      newState.chat.push({
+      if (!newState.chat[roomId]) {
+        newState.chat[roomId] = [];
+      }
+      newState.chat[roomId].push({
         message: action.message,
         type: 'sent',
         author: action.author,
@@ -28,8 +36,12 @@ const reducer = (state, action) => {
       return newState;
     }
     case NOTICE: {
+      const roomId = action.roomId;
       const newState = { ...state };
-      newState.chat.push({
+      if (!newState.chat[roomId]) {
+        newState.chat[roomId] = [];
+      }
+      newState.chat[roomId].push({
         message: action.message,
         type: 'notice',
       });
@@ -46,19 +58,19 @@ const reducer = (state, action) => {
 
 export const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
-    chat: [],
+    chat: {},
   });
 
-  const sendMessage = ({ message, author }) => {
-    dispatch({ type: MESSAGE_SEND, message, author });
+  const sendMessage = ({ message, author, roomId }) => {
+    dispatch({ type: MESSAGE_SEND, message, author, roomId });
   };
 
-  const receiveMessage = ({ message, author }) => {
-    dispatch({ type: MESSAGE_RECEIVED, message, author });
+  const receiveMessage = ({ message, author, roomId }) => {
+    dispatch({ type: MESSAGE_RECEIVED, message, author, roomId });
   };
 
-  const handleNotice = (message) => {
-    dispatch({ type: NOTICE, message });
+  const handleNotice = (message, roomId) => {
+    dispatch({ type: NOTICE, message, roomId });
   };
 
   const clearMessages = () => {

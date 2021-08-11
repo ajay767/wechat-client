@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Room from './pages/Room';
 import Home from './pages/Home';
@@ -17,6 +17,7 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/room/:id" component={Room} />
+          <Redirect from="/" to="/" />
         </Switch>
       </div>
       <Footer />

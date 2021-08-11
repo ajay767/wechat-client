@@ -1,4 +1,6 @@
 .room {
-  background-image: linear-gradient(#ffffffc2, #ffffffc2),
-    url('http://localhost:3001/assets/chat.png');
+  background-image: url('https://wechat-ajay767.vercel.app/assets/dark.png');
+  // url('http://localhost:3000/assets/dark.png');
+  background-size: cover;
+  background-position: center;
 }

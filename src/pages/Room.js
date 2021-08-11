@@ -11,10 +11,11 @@ import io from 'socket.io-client';
 
 import './room.scss';
 
-const socket = io(process.env.REACT_APP_SOCKET);
+const socket = io(process.env.REACT_APP_SOCKET, { withCredentials: true });
 
 function Room() {
   const chatRef = useRef(null);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   const [message, setMessage] = useState('');
   const [showModal, setShowModal] = useState(true);
@@ -23,7 +24,7 @@ function Room() {
   const params = useParams();
 
   const { user } = useContext(AuthContext);
-  const { chat, sendMessage, receiveMessage, handleNotice, clearMessages } =
+  const { chat, sendMessage, receiveMessage, handleNotice } =
     useContext(ChatContext);
 
   const query = useMemo(
@@ -32,12 +33,13 @@ function Room() {
   );
 
   const handleSendingMessage = (message) => {
-    sendMessage({ message, author: user?.name });
+    if (!message) return;
+    sendMessage({ message, author: user?.name, roomId: params.id });
     socket.emit('to-server', { roomId: params.id, message, name: user?.name });
   };
 
   const renderMessage = () => {
-    return chat.map((item, index) => {
+    return chat[params.id]?.map((item, index) => {
       if (item.type === 'notice') {
         return (
           <div
@@ -83,7 +85,6 @@ function Room() {
       const visibleHeight = chatRef.current.offsetHeight;
       const containerHeight = chatRef.current.scrollHeight;
       const scrollOffset = chatRef.current.scrollTop + visibleHeight;
-      // console.log(visibleHeight, containerHeight, scrollOffset, lastElement);
       if (containerHeight - lastElement <= scrollOffset) {
         chatRef.current.scrollTop = chatRef.current.scrollHeight;
       }
@@ -91,7 +92,16 @@ function Room() {
   });
 
   useEffect(() => {
-    console.log(window.innerHeight);
+    const updateWindowHeight = () => {
+      setWindowHeight(window.innerHeight);
+      console.log('updating height');
+    };
+    window.addEventListener('resize', updateWindowHeight);
+
+    return () => window.removeEventListener('resize', updateWindowHeight);
+  }, []);
+
+  useEffect(() => {
     socket.emit('join-room', {
       roomId: params.id,
       visibility: query.visibility,
@@ -100,25 +110,30 @@ function Room() {
     });
 
     socket.on('to-client', (obj) => {
-      receiveMessage({ message: obj.message, author: obj.name });
+      window.navigator.vibrate(300);
+      receiveMessage({
+        message: obj.message,
+        author: obj.name,
+        roomId: params.id,
+      });
     });
 
-    socket.on('greet', (message) => handleNotice(message));
+    socket.on('greet', (message) => handleNotice(message, params.id));
 
     return () => {
-      clearMessages();
+      window.navigator.vibrate(0);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [params, query]);
 
   return (
     <Flex
-      style={{ maxHeight: `${window.innerHeight - 120}px` }}
+      style={{ maxHeight: `${windowHeight - 90}px` }}
       className="min-h-full  relative flex flex-col "
     >
       <div
         ref={chatRef}
-        className="scrollbar-hide flex-1 bg-chat flex flex-col room overflow-y-scroll pb-5"
+        className="scrollbar-hide flex-1 flex flex-col room overflow-y-scroll pb-5"
       >
         {renderMessage()}
       </div>
@@ -131,7 +146,7 @@ function Room() {
           className="h-12 p-2 flex-1 outline-none bg-transparent"
         />
         <button
-          className="ml-2 h-12 w-12 rounded-full bg-green-600 flex items-center justify-center transform active:scale-95 ease-in"
+          className="ml-2 h-12 w-12 outline-none rounded-full bg-green-600 flex items-center justify-center transform active:scale-95 ease-in"
           onClick={() => handleSendingMessage(message)}
         >
           <FiSend size={24} color="#fff" />

@@ -26,7 +26,12 @@ export const Provider = ({ children }) => {
   });
 
   const handleLogin = (userData, history) => {
-    localStorage.setItem('userData', JSON.stringify(userData));
+    const user = { ...userData };
+    const name = user.name;
+    const nameArr = name.split('');
+    nameArr[0] = nameArr[0].toLocaleUpperCase();
+    user.name = nameArr.join('');
+    localStorage.setItem('userData', JSON.stringify(user));
     dispatch({ type: 'LOGIN', payload: userData });
     history.push('/');
   };

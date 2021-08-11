@@ -12,7 +12,7 @@ function Card({ onSubmit, onClose }) {
   };
 
   return (
-    <div className="mx-5 bg-white shadow-xl p-4 border  rounded ">
+    <div className="mx-5 bg-white shadow-xl p-4 rounded ">
       <h4 className="text-xl font-bold text-gray-600">Wechat Meeting Room</h4>
       <p className="text-base font-normal text-gray-600 mt-2">
         Hurray!! your room is ready to share

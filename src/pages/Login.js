@@ -15,7 +15,7 @@ function Login() {
   return (
     <div className="p-2 px-4 mt-14 w-full my-auto">
       <h4 className="text-4xl text-green-600 font-bold text-center">Wechat</h4>
-      <div className="w-full mt-10">
+      <div className="w-full sm:w-10/12 md:w-6/12 mx-auto mt-10">
         <Input value={name} setValue={setName} label="Name" type="text" />
         <Input value={email} setValue={setEmail} label="Email" type="email" />
         <Input
