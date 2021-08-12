@@ -5,9 +5,9 @@ import propTypes from 'prop-types';
 function Input({ value, setValue, label, type = 'text' }) {
   return (
     <div className="w-full">
-      <h4 className="text-base font-semibold text-gray-600">{label}</h4>
+      <h4 className="text-sm font-semibold text-gray-600">{label}</h4>
       <input
-        className="w-full h-12 my-2 p-2 border-2 border-gray-400 rounded outline-none text-base text-gray-800"
+        className="w-full h-10 my-2 p-2 border border-gray-400 rounded outline-none text-base text-gray-800"
         name="name"
         type={type}
         value={value}

@@ -4,6 +4,7 @@ import { Context as AuthContext } from '../context/userContext';
 import { Context as ChatContext } from '../context/chatContext';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { FiSend } from 'react-icons/fi';
+import withUser from '../HOC/withUser';
 import Flex from '../components/Flex';
 import Modal from '../components/Modal';
 import queryString from 'query-string';
@@ -193,4 +194,4 @@ function Room() {
   );
 }
 
-export default Room;
+export default withUser(Room);

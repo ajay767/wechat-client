@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="z-10 sm:w-10/12 lg:w-6/12 mx-auto min-h-screen flex bg-white  flex-col relative">
       <Header />
       <div className="flex-1 flex flex-col">
         <Switch>

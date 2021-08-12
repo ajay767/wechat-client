@@ -4,6 +4,7 @@ import { Provider as UserProvider } from './context/userContext';
 import { Provider as ChatProvider } from './context/chatContext';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
+import './index.scss';
 
 import App from './App';
 

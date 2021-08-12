@@ -3,7 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import { FaUserSecret } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
+import { IoMdTrash } from 'react-icons/io';
 import { Context as AuthContext } from '../context/userContext';
+import withUser from '../HOC/withUser';
 import moment from 'moment';
 import Flex from '../components/Flex';
 import Modal from '../components/Modal';
@@ -11,6 +13,7 @@ import Card from '../components/Card';
 import axios from 'axios';
 
 function Home() {
+  const [reload, setReload] = useState(true);
   const [secretRooms, setsecretRooms] = useState([]);
   const [publicRooms, setPublicRooms] = useState([]);
   const [secretRoomId, setSecretRoomId] = useState('');
@@ -36,34 +39,57 @@ function Home() {
     history.push(`/room/${roomId}?visibility=false`);
   };
 
+  const handleRoomDelete = async (id, rooms) => {
+    axios.delete(`${process.env.REACT_APP_SOCKET}/api/room/${id}`);
+    setReload(!reload);
+  };
+
   const renderRooms = (rooms) => {
     return rooms.map((item, index) => {
+      const isOwner =
+        (item.password === user?.password && item.email === user?.email) ||
+        (item.email === process.env.REACT_ADMIN_EMAIL &&
+          item.password === process.env.REACT_ADMIN_PASSWORD);
       return (
-        <NavLink
+        <div
           key={index}
-          to={`/room/${item.roomId}?visibility=${item.visibility}`}
+          className="py-2 pl-1 my-2 flex flex-row justify-between items-center  rounded cursor-pointer"
         >
-          <div className="py-2 pl-1 my-2 flex flex-row justify-start items-center hover:bg-gray-200 rounded cursor-pointer">
-            <img
-              src="/assets/user.png"
-              alt="group"
-              className="h-12 w-12 mr-2"
-            />
-            <div>
-              <h4 className="text-sm font-semibold text-gray-600">
-                {item.admin}
-              </h4>
-              <p className="text-sm font-normal text-gray-600">
-                Created {moment(item.createdAt).fromNow()}
-              </p>
+          <NavLink
+            key={index}
+            to={`/room/${item.roomId}?visibility=${item.visibility}`}
+          >
+            <div className="flex items-center justify-center">
+              <img
+                src="/assets/user.png"
+                alt="group"
+                className="h-12 w-12 mr-2"
+              />
+              <div>
+                <h4 className="text-sm font-semibold text-gray-600">
+                  {item.admin}
+                </h4>
+                <p className="text-sm font-normal text-gray-600">
+                  Created {moment(item.createdAt).fromNow()}
+                </p>
+              </div>
             </div>
-          </div>
-        </NavLink>
+          </NavLink>
+          {isOwner && (
+            <div
+              onClick={() => handleRoomDelete(item._id)}
+              className="mr-2 h-12 w-12 bg-green-600 hover:bg-green-800 rounded-full flex items-center justify-center"
+            >
+              <IoMdTrash size={24} color="#fff" />
+            </div>
+          )}
+        </div>
       );
     });
   };
 
   useEffect(() => {
+    console.log('fetching rooms');
     const fetchRooms = async () => {
       const res = await axios.get(
         `${process.env.REACT_APP_SOCKET}/api/public`,
@@ -93,7 +119,7 @@ function Home() {
     fetchSecretRooms();
     fetchRooms();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]);
+  }, [isLoggedIn, reload]);
 
   return (
     <>
@@ -183,4 +209,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withUser(Home);

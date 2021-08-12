@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Context as AuthContext } from './../context/userContext';
 import Input from '../components/Input';
@@ -6,16 +6,21 @@ import Button from '../components/Button';
 
 function Login() {
   const history = useHistory();
-  const { handleLogin } = useContext(AuthContext);
+  const { handleLogin, getUserData } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
+  useEffect(() => {
+    console.log('getting user data');
+    getUserData(history);
+  }, []);
+
   return (
     <div className="p-2 px-4 mt-14 w-full my-auto">
       <h4 className="text-4xl text-green-600 font-bold text-center">Wechat</h4>
-      <div className="w-full sm:w-10/12 md:w-6/12 mx-auto mt-10">
+      <div className="w-full md:w-10/12 mx-auto mt-10">
         <Input value={name} setValue={setName} label="Name" type="text" />
         <Input value={email} setValue={setEmail} label="Email" type="email" />
         <Input
