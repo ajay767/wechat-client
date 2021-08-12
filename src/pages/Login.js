@@ -6,16 +6,23 @@ import Button from '../components/Button';
 
 function Login() {
   const history = useHistory();
-  const { handleLogin, getUserData } = useContext(AuthContext);
+  const { handleLogin, getUserData, isLoggedIn } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
   useEffect(() => {
-    console.log('getting user data');
-    getUserData(history);
-  }, []);
+    let mounted = true;
+    if (mounted) {
+      console.log('getting user data', isLoggedIn);
+      getUserData(history);
+    }
+    return () => {
+      console.log('unmounting login');
+      mounted = false;
+    };
+  }, [isLoggedIn]);
 
   return (
     <div className="p-2 px-4 mt-14 w-full my-auto">

@@ -194,4 +194,4 @@ function Room() {
   );
 }
 
-export default withUser(Room);
+export default Room;

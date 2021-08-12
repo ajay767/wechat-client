@@ -9,13 +9,13 @@ function Header() {
   const { getUserData, isLoggedIn, handleLogout } = useContext(authContext);
 
   useEffect(() => {
-    getUserData(history);
+    if (!isLoggedIn) getUserData(history);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]);
+  });
 
   return (
     <div className="flex items-center justify-between border-b-2 border-gray-100 p-2">
-      <NavLink to="/">
+      <NavLink to={isLoggedIn ? '/' : '/login'}>
         <h4 className="text-2xl text-green-600 font-bold">
           Wechat<span className="text-base ml-2">v1.0</span>
         </h4>

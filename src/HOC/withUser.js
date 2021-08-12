@@ -3,17 +3,18 @@ import { useHistory } from 'react-router-dom';
 import { Context as AuthContext } from './../context/userContext';
 
 function withUser({ children }) {
-  const Wrapper = () => {
-    const { isLoggedIn } = useContext(AuthContext);
+  const Wrapper = ({ ...props }) => {
+    const { isLoggedIn, user } = useContext(AuthContext);
     const history = useHistory();
 
     useEffect(() => {
       if (!isLoggedIn) {
-        history.push('/login');
+        console.log('user is null', user);
+        // history.push('/login');
       }
-    }, []);
+    });
 
-    return <>{children}</>;
+    return <div {...props}>{children}</div>;
   };
   return Wrapper;
 }

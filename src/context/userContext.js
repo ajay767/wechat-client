@@ -46,7 +46,9 @@ export const Provider = ({ children }) => {
     const data = localStorage.getItem('userData');
 
     if (data) {
-      return dispatch({ type: 'GET_USER', payload: JSON.parse(data) });
+      dispatch({ type: 'GET_USER', payload: JSON.parse(data) });
+      history.push('/');
+      return;
     }
     history.push('/login');
   };

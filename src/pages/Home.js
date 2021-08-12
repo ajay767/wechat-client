@@ -39,7 +39,7 @@ function Home() {
     history.push(`/room/${roomId}?visibility=false`);
   };
 
-  const handleRoomDelete = async (id, rooms) => {
+  const handleRoomDelete = async (id) => {
     axios.delete(`${process.env.REACT_APP_SOCKET}/api/room/${id}`);
     setReload(!reload);
   };
@@ -48,8 +48,8 @@ function Home() {
     return rooms.map((item, index) => {
       const isOwner =
         (item.password === user?.password && item.email === user?.email) ||
-        (item.email === process.env.REACT_ADMIN_EMAIL &&
-          item.password === process.env.REACT_ADMIN_PASSWORD);
+        (user?.email === process.env.REACT_APP_ADMIN_EMAIL &&
+          user?.password === process.env.REACT_APP_ADMIN_PASSWORD);
       return (
         <div
           key={index}
@@ -89,7 +89,8 @@ function Home() {
   };
 
   useEffect(() => {
-    console.log('fetching rooms');
+    let mounted = true;
+
     const fetchRooms = async () => {
       const res = await axios.get(
         `${process.env.REACT_APP_SOCKET}/api/public`,
@@ -100,7 +101,6 @@ function Home() {
           },
         }
       );
-
       setPublicRooms(res.data.rooms);
     };
 
@@ -116,8 +116,16 @@ function Home() {
       );
       setsecretRooms(res.data.rooms);
     };
-    fetchSecretRooms();
-    fetchRooms();
+
+    if (mounted) {
+      fetchSecretRooms();
+      fetchRooms();
+    }
+
+    return () => {
+      console.log('unmounting home page');
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, reload]);
 
@@ -209,4 +217,5 @@ function Home() {
   );
 }
 
-export default withUser(Home);
+export default Home;
+// export default withUser(Home);
